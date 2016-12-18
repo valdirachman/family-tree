@@ -1,0 +1,9 @@
+Asumsi
+1. Person's parents properties (fatherId and motherId) refer to biological parents
+2. A person can only marry exactly one person at the same time
+3. A person can have more than one former spouse
+4. A person is divorced if and only if he/she is not married to anyone at the moment
+4.a. If a person was divorced in the past but now is married, isDivorced() will return false
+5. getSiblings() consists biological brothers & sisters, and half brothers & sisters
+6. getBrothers() consists biological brothers only
+7. getSister() consists biological sisters only
