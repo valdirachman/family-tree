@@ -514,6 +514,154 @@ class Person {
     return arrNephews;
   }
 
+  hashToNumericArray(hashResult) {
+    let numericArray = [];
+    for (let item in hashResult){
+        numericArray.push(hash_array[item]);
+    }
+    return numericArray;
+  }
+
+  findRec(arrString, hashResult) {
+    if (arrString.length === 0) {
+      hashResult[this.id] = this;
+      return hashResult;
+    }
+    let last = arrString.pop();
+    switch (last) {
+      case "spouse":
+        let spouse = this.getSpouse();
+        if (spouse) {
+          hashResult = spouse.findRec(arrString, hashResult);
+        }
+        break;
+      case "former spouse":
+        let formerSpouses = this.getFormerSpouses();
+        for (let formerSpouse of formerSpouses) {
+          hashResult = formerSpouse.findRec(arrString, hashResult);
+        }
+        break;
+      case "parent":
+        let parents = this.getParents();
+        for (let parent of parents) {
+          hashResult = parent.findRec(arrString, hashResult);
+        }
+        break;
+      case "child":
+        let children = this.getChildren();
+        for (let child of children) {
+          hashResult = child.findRec(arrString, hashResult);
+        }
+        break;
+      case "sibling":
+        let siblings = this.getSiblings();
+        for (let sibling of siblings) {
+          hashResult = sibling.findRec(arrString, hashResult);
+        }
+        break;
+      case "sister":
+        let sisters = this.getSisters();
+        for (let sister of sisters) {
+          hashResult = sister.findRec(arrString, hashResult);
+        }
+        break;
+      case "brother":
+        let brothers = this.getBrothers();
+        for (let brother of brothers) {
+          hashResult = brother.findRec(arrString, hashResult);
+        }
+        break;
+      case "step child":
+        let stepChildren = this.getStepChildren();
+        for (let stepChild of stepChildren) {
+          hashResult = stepChild.findRec(arrString, hashResult);
+        }
+        break;
+      case "step sister":
+        let stepSisters = this.getStepSisters();
+        for (let stepSister of stepSisters) {
+          hashResult = stepSister.findRec(arrString, hashResult);
+        }
+        break;
+      case "step brother":
+        let stepBrothers = this.getStepBrothers();
+        for (let stepBrother of stepBrothers) {
+          hashResult = stepBrother.findRec(arrString, hashResult);
+        }
+        break;
+      case "step mother":
+        let stepMother = this.getStepMother();
+        if (stepMother) {
+          hashResult = stepMother.findRec(arrString, hashResult);
+        }
+        break;
+      case "step father":
+        let stepFather = this.getStepFather();
+        if (stepFather) {
+          hashResult = stepFather.findRec(arrString, hashResult);
+        }
+        break;
+      case "uncle":
+        let uncles = this.getUncles();
+        for (let uncle of uncles) {
+          hashResult = uncle.findRec(arrString, hashResult);
+        }
+        break;
+      case "aunty":
+        let aunties = this.getAunties();
+        for (let aunty of aunties) {
+          hashResult = aunty.findRec(arrString, hashResult);
+        }
+        break;
+      case "grand father":
+        let grandFathers = this.getGrandFathers();
+        for (let grandFather of grandFathers) {
+          hashResult = grandFather.findRec(arrString, hashResult);
+        }
+        break;
+      case "grand mother":
+        let grandMothers = this.getGrandMothers();
+        for (let grandMother of grandMothers) {
+          hashResult = grandMother.findRec(arrString, hashResult);
+        }
+        break;
+      case "grand parent":
+        let grandParents = this.getGrandParents();
+        for (let grandParent of grandParents) {
+          hashResult = grandParent.findRec(arrString, hashResult);
+        }
+        break;
+      case "grand child":
+        let grandChildren = this.getGrandChildren();
+        for (let grandChild of grandChildren) {
+          hashResult = grandChild.findRec(arrString, hashResult);
+        }
+        break;
+      case "cousin":
+        let cousins = this.getCousins();
+        for (let cousin of cousins) {
+          hashResult = cousin.findRec(arrString, hashResult);
+        }
+        break;
+      case "nephew":
+        let nephews = this.getNephews();
+        for (let nephew of nephews) {
+          hashResult = nephew.findRec(arrString, hashResult);
+        }
+        break;
+      default:
+        console.log("I could not recognize " + last + ", what is it?")
+        return {};
+    }
+    return hashResult;
+  }
+
+  find(string) {
+    let arrString = string.split(" of ");
+    let hashResult = {};
+    hashResult = findRec(arrString, hashResult);
+    return hashToNumericArray(hashResult);
+  }
 }
 
 class Marriage {
@@ -602,6 +750,59 @@ class Repo {
     } else {
       return null;
     }
+  }
+
+  getAncestors(person) {
+    let queue = [],
+        hashAncestors = {};
+    queue.push({person: person, distance: 0});
+    while (queue.length > 0) {
+      let node = queue.shift(),
+          human = node.person,
+          distance = node.distance,
+          father = human.getFather(),
+          mother = human.getMother();
+      if (father) {
+        queue.push({person: father, distance: distance + 1});
+        hashAncestors[father.getId()] = {person: father, distance: distance + 1};
+      }
+      if (mother) {
+        queue.push({person: mother, depth: depth + 1});
+        hashAncestors[mother.getId()] = {person: mother, distance: distance + 1};
+      }
+    }
+    return hashAncestors;
+  }
+
+  getRootAndDistance(person, hashAncestors){
+    let queue = [];
+    queue.push({person: person, distance: 0});
+    while (queue.length > 0) {
+      let node = queue.shift(),
+          human = node.person,
+          distance1 = node.distance,
+          father = human.getFather(),
+          mother = human.getMother();
+      // If this person included in hashAncestors of the other person
+      if (hashAncestors[human.getId()] !== undefined) {
+        // Cek distance
+        let distance2 = hashAncestors[human.getId()].distance;
+        let distanceMax = (distance1 > distance2) ? distance1 : distance2;
+        return {person: human, distance: distanceMax};
+      }
+      if (father) {
+        queue.push({person: father, distance: distance1 + 1});
+      }
+      if (mother) {
+        queue.push({person: mother, distance: distance1 + 1});
+      }
+    }
+    return null;
+  }
+
+  getRelationRoot(person1, person2) {
+    let hashAncestorsPerson1 = this.getAncestors(person1);
+    return this.getRootAndDistance(person2, hashAncestorsPerson1);
   }
 }
 

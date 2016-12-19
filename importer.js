@@ -1,3 +1,4 @@
+"use strict";
 let {Repo} = require("./models.js");
 var fs = require('fs');
 var parse = require('csv-parse');
@@ -39,7 +40,7 @@ function importMarriageCSV(filePath, repo) {
         console.log(repo);
       });
     //return repo;
-}"use strict";
+}
 
 var repo = new Repo();
 importPersonCSV("./person.csv", repo);
