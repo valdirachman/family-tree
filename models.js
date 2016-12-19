@@ -1,3 +1,5 @@
+"use strict";
+
 class Person {
 
   constructor(repo, {id, name, gender, birthDate, fatherId, motherId}) {
@@ -212,7 +214,10 @@ class Person {
   getParents() {
     let biologicalFather = this.getFather();
     let biologicalMother = this.getMother();
-    return {father: biologicalFather, mother: biologicalMother};
+    let arrParents = [];
+    arrParents.push(biologicalFather);
+    arrParents.push(biologicalMother);
+    return arrParents;
   }
 
   getChildren() {
@@ -662,6 +667,65 @@ class Person {
     hashResult = findRec(arrString, hashResult);
     return hashToNumericArray(hashResult);
   }
+
+  relationTo(person) {
+    let queue = [];
+    let arrPath = [];
+    let hashVisited = {};
+    queue.push([this, arrPath]);
+    while (queue.length > 0) {
+      let [node, arrPathRelation] = queue.shift();
+      if (node.getId() === person.getId()){
+        let stringRelation = arrPathRelation.join(" of ");
+        return this.getName() + " is " + stringRelation + " of "+ person.getName();
+      }
+      let arrRelations = [];
+      let arrSingle = [];
+      arrSingle.push([node.getSpouse(), "spouse"]);
+      arrSingle.push([node.getStepMother(), "step mother"]);
+      arrSingle.push([node.getStepFather(), "step father"]);
+      arrRelations.push([node.getFormerSpouses(), "former spouse"]);
+      arrRelations.push([node.getParents(), "parent"]);
+      arrRelations.push([node.getChildren(), "child"]);
+      arrRelations.push([node.getSiblings(), "sibling"]);
+      arrRelations.push([node.getSisters(), "sister"]);
+      arrRelations.push([node.getBrothers(), "brother"]);
+      arrRelations.push([node.getStepChildren(), "step child"]);
+      arrRelations.push([node.getStepSisters(), "step sister"]);
+      arrRelations.push([node.getStepBrothers(), "step brother"]);
+      arrRelations.push([node.getUncles(), "uncle"]);
+      arrRelations.push([node.getAunties(), "aunty"]);
+      arrRelations.push([node.getGrandFathers(), "grand father"]);
+      arrRelations.push([node.getGrandMothers(), "grand mother"]);
+      //grandParents = node.getGrandParents() -> this is not included since its the same as grandfathers and grandmothers
+      arrRelations.push([node.getGrandChildren(), "grand child"]);
+      arrRelations.push([node.getCousins(), "cousin"]);
+      arrRelations.push([node.getNephews(), "nephew"]);
+
+      for (let [element, relationString] of arrSingle) {
+        if (element && !(element.getId() in hashVisited)) {
+          let newArrPath = arrPathRelation.slice();
+          newArrPath.append(relationString);
+          queue.push([element, newArrPath]);
+          hashVisited[element.getId()] = true;
+        }
+      }
+
+      for (let [arrRelation, relationString] of arrRelations) {
+        for (let aPerson of arrRelation) {
+          if (!(aPerson.getId() in hashVisited)) {
+            let newArrPath = arrPathRelation.slice();
+            newArrPath.append(relationString);
+            queue.push([aPerson, newArrPath]);
+            hashVisited[aPerson.getId()] = true;
+          }
+        }
+      }
+    }
+
+    // No relation
+    return this.getName() + " is not related to" + person.getName();
+  }
 }
 
 class Marriage {
@@ -806,4 +870,4 @@ class Repo {
   }
 }
 
-module.exports = {Person, Marriage, Repo};"use strict";
+module.exports = {Person, Marriage, Repo};
