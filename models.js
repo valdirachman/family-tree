@@ -316,6 +316,101 @@ class Person {
     return arrBrothers;
   }
 
+  getStepChildren() {
+    let spouse = this.getSpouse();
+    if (spouse) {
+      let arrChildren = spouse.getChildren();
+      if (arrChildren.length > 0 && !this.isParent(arrChildren[0])) {
+        return arrChildren;
+      }
+    }
+    return [];
+  }
+
+  getStepMother() {
+    let father = this.getFather();
+    if (father) {
+      let fatherSpouse = father.getSpouse();
+      if (fatherSpouse && !fatherSpouse.isParent(this)) {
+        return fatherSpouse;
+      }
+    }
+    return null;
+  }
+
+  getStepFather() {
+    let mother = this.getMother();
+    if (mother) {
+      let motherSpouse = mother.getSpouse();
+      if (motherSpouse && !motherSpouse.isParent(this)) {
+        return motherSpouse;
+      }
+    }
+    return null;
+  }
+
+  getDaughters() {
+    let hashPerson = this.repo.getHashPerson();
+    let arrDaughters = [];
+    for (let personId in hashPerson) {
+      let person = hashPerson[personId];
+      if (!person.isMale() && this.isParent(person)) {
+        arrDaughters.push(person);
+      }
+    }
+    return arrDaughters;
+  }
+
+  getSons() {
+    let hashPerson = this.repo.getHashPerson();
+    let arrSons = [];
+    for (let personId in hashPerson) {
+      let person = hashPerson[personId];
+      if (person.isMale() && this.isParent(person)) {
+        arrSons.push(person);
+      }
+    }
+    return arrSons;
+  }
+
+  getStepSisters() {
+    let arrStepSisters = []
+    let stepMother = this.getStepMother();
+    if (stepMother) {
+      let arrStepSistersFromStepMother = stepMother.getDaughters();
+      if (arrStepSistersFromStepMother.length > 0) {
+        arrStepSisters = arrStepSisters.concat(arrStepSistersFromStepMother);
+      }
+    }
+    let stepFather = this.getStepFather();
+    if (stepFather) {
+      let arrStepSistersFromStepFather = stepFather.getDaughters();
+      if (arrStepSistersFromStepFather.length > 0) {
+        arrStepSisters = arrStepSisters.concat(arrStepSistersFromStepFather);
+      }
+    }
+    return arrStepSisters;
+  }
+
+  getStepBrothers() {
+    let arrStepBrothers = []
+    let stepMother = this.getStepMother();
+    if (stepMother) {
+      let arrStepBrothersFromStepMother = stepMother.getSons();
+      if (arrStepBrothersFromStepMother.length > 0) {
+        arrStepBrothers = arrStepBrothers.concat(arrStepBrothersFromStepMother);
+      }
+    }
+    let stepFather = this.getStepFather();
+    if (stepFather) {
+      let arrStepBrothersFromStepFather = stepFather.getSons();
+      if (arrStepBrothersFromStepFather.length > 0) {
+        arrStepBrothers = arrStepBrothers.concat(arrStepBrothersFromStepFather);
+      }
+    }
+    return arrStepBrothers;
+  }
+
   getUncles() {
     // Get uncles from biological father
     let biologicalFather = this.getFather();
@@ -418,6 +513,7 @@ class Person {
     }
     return arrNephews;
   }
+
 }
 
 class Marriage {
