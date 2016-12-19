@@ -702,7 +702,7 @@ class Person {
     while (queue.length > 0) {
       let [node, arrPathRelation] = queue.shift();
       if (node.getId() === this.getId()){
-        let stringRelation = arrPathRelation.join(" of ");
+        let stringRelation = arrPathRelation.reverse().join(" of ");
         return this.getName() + " is a " + stringRelation + " of "+ person.getName();
       }
       let arrRelations = [];

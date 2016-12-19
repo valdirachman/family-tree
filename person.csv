@@ -1,5 +1,11 @@
 1;Budi Raharjo;male;1965-12-20;2;3;
 2;Bapak Budi;male;1945-12-20;6;7;
-3;Ibu Budi;female;1950-12-20;8;9;
-4;Step Ibu Budi;female;1950-12-20;10;11;
-5;Bukan Step Ibu Budi;female;1950-12-20;10;11;
+3;Ibu Budi;female;1950-12-20;100;101;
+4;Step Ibu Budi;female;1950-12-20;100;101;
+5;Bukan Step Ibu Budi;female;1950-12-20;102;103;
+6;Kakek budi;male;1945-12-20;8;9;
+7;Nenek budi;female;1945-12-20;104;105;
+8;Bapak Kakek Budi;male;1945-12-20;106;107;
+9;Ibu Kakek Budi;female;1945-12-20;108;109;
+10;Brother Kakek Budi;male;1945-12-20;8;9;
+11;Anak brother kakek budi;male;1945-12-20;10;110;
