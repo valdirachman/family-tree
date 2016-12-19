@@ -857,7 +857,7 @@ class Repo {
         hashAncestors[father.getId()] = {person: father, distance: distance + 1};
       }
       if (mother) {
-        queue.push({person: mother, depth: depth + 1});
+        queue.push({person: mother, distance: distance + 1});
         hashAncestors[mother.getId()] = {person: mother, distance: distance + 1};
       }
     }
