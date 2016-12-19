@@ -42,8 +42,9 @@ function importMarriageCSV(filePath, repo) {
         let ibuBudi = repo.getPersonById("3");
         let stepIbuBudi = repo.getPersonById("4");
         let kakekBudi = repo.getPersonById("6");
-        let x = repo.getPersonById("10");
+        let x = repo.getPersonById("11");
         console.log(budi.relationTo(x));
+        console.log(x.find("grand child of uncle"));
       });
     //return repo;
 }

@@ -548,7 +548,7 @@ class Person {
   hashToNumericArray(hashResult) {
     let numericArray = [];
     for (let item in hashResult){
-        numericArray.push(hash_array[item]);
+        numericArray.push(hashResult[item]);
     }
     return numericArray;
   }
@@ -690,8 +690,8 @@ class Person {
   find(string) {
     let arrString = string.split(" of ");
     let hashResult = {};
-    hashResult = findRec(arrString, hashResult);
-    return hashToNumericArray(hashResult);
+    hashResult = this.findRec(arrString, hashResult);
+    return this.hashToNumericArray(hashResult);
   }
 
   relationTo(person) {
