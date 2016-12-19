@@ -417,44 +417,70 @@ class Person {
   }
 
   getUncles() {
+    let arrUncles = [];
     // Get uncles from biological father
     let biologicalFather = this.getFather();
-    let arrUnclesFromFather = biologicalFather.getBiologicalBrothers();
+    if (biologicalFather) {
+      arrUncles = arrUncles.concat(biologicalFather.getBiologicalBrothers());
+    }
     // Get uncles from biological mother
     let biologicalMother = this.getMother();
-    let arrUnclesFromMother = biologicalMother.getBiologicalBrothers();
-    // Concatenate both arrays
-    let arrUncles = arrUnclesFromFather.concat(arrUnclesFromMother);
+    if (biologicalMother) {
+      arrUncles = arrUncles.concat(biologicalMother.getBiologicalBrothers());
+    }
     return arrUncles;
   }
 
   getAunties() {
-    // Get uncles from biological father
+    let arrAunties = [];
+    // Get aunties from biologicalFather
     let biologicalFather = this.getFather();
-    let arrAuntiesFromFather = biologicalFather.getBiologicalSisters();
-    // Get uncles from biological mother
+    if (biologicalFather) {
+      arrAunties = arrAunties.concat(biologicalFather.getBiologicalSisters());
+    }
+    // Get aunties from biological mother
     let biologicalMother = this.getMother();
-    let arrAuntiesFromMother = biologicalMother.getBiologicalSisters();
-    // Concatenate both arrays
-    let arrAunties = arrAuntiesFromFather.concat(arrAuntiesFromMother);
+    if (biologicalMother) {
+      arrAunties = arrAunties.concat(biologicalMother.getBiologicalSisters());
+    }
     return arrAunties;
   }
 
   getGrandFathers() {
     let arrGrandFathers = [];
-    let grandFatherFromFather = this.getFather().getFather();
-    let grandFatherFromMother = this.getMother().getFather();
-    arrGrandFathers.push(grandFatherFromFather);
-    arrGrandFathers.push(grandFatherFromMother);
+    let father = this.getFather();
+    if (father) {
+      let grandFatherFromFather = father.getFather();
+      if (grandFatherFromFather) {
+          arrGrandFathers.push(grandFatherFromFather);
+      }
+    }
+    let mother = this.getMother();
+    if (mother) {
+      let grandFatherFromMother = mother.getFather();
+      if (grandFatherFromMother) {
+          arrGrandFathers.push(grandFatherFromMother);
+      }
+    }
     return arrGrandFathers;
   }
 
   getGrandMothers() {
     let arrGrandMothers = [];
-    let grandMotherFromFather = this.getFather().getMother();
-    let grandMotherFromMother = this.getMother().getMother();
-    arrGrandMothers.push(grandMotherFromFather);
-    arrGrandMothers.push(grandMotherFromMother);
+    let father = this.getFather();
+    if (father) {
+      let grandMotherFromFather = father.getMother();
+      if (grandMotherFromFather) {
+          arrGrandMothers.push(grandMotherFromFather);
+      }
+    }
+    let mother = this.getMother();
+    if (mother) {
+      let grandMotherFromMother = mother.getMother();
+      if (grandMotherFromMother) {
+          arrGrandMothers.push(grandMotherFromMother);
+      }
+    }
     return arrGrandMothers;
   }
 
@@ -467,11 +493,11 @@ class Person {
 
   getGrandChildren() {
     let arrGrandChildren = [];
-    let arrChildren  = getChildren();
+    let arrChildren  = this.getChildren();
     if (arrChildren.length > 0) {
       for (let child of arrChildren) {
         let arrGrandChildrenFromChild = child.getChildren();
-        if (arrGrandChildrenFromChildren.length > 0) {
+        if (arrGrandChildrenFromChild.length > 0) {
             arrGrandChildren = arrGrandChildren.concat(arrGrandChildrenFromChild);
         }
       }
@@ -672,12 +698,12 @@ class Person {
     let queue = [];
     let arrPath = [];
     let hashVisited = {};
-    queue.push([this, arrPath]);
+    queue.push([person, arrPath]);
     while (queue.length > 0) {
       let [node, arrPathRelation] = queue.shift();
-      if (node.getId() === person.getId()){
+      if (node.getId() === this.getId()){
         let stringRelation = arrPathRelation.join(" of ");
-        return this.getName() + " is " + stringRelation + " of "+ person.getName();
+        return this.getName() + " is a " + stringRelation + " of "+ person.getName();
       }
       let arrRelations = [];
       let arrSingle = [];
@@ -697,7 +723,7 @@ class Person {
       arrRelations.push([node.getAunties(), "aunty"]);
       arrRelations.push([node.getGrandFathers(), "grand father"]);
       arrRelations.push([node.getGrandMothers(), "grand mother"]);
-      //grandParents = node.getGrandParents() -> this is not included since its the same as grandfathers and grandmothers
+      //grandParents = node.getGrandParents() -> this is not included since it's the same as grandfathers and grandmothers
       arrRelations.push([node.getGrandChildren(), "grand child"]);
       arrRelations.push([node.getCousins(), "cousin"]);
       arrRelations.push([node.getNephews(), "nephew"]);
@@ -705,7 +731,7 @@ class Person {
       for (let [element, relationString] of arrSingle) {
         if (element && !(element.getId() in hashVisited)) {
           let newArrPath = arrPathRelation.slice();
-          newArrPath.append(relationString);
+          newArrPath.push(relationString);
           queue.push([element, newArrPath]);
           hashVisited[element.getId()] = true;
         }
@@ -713,9 +739,9 @@ class Person {
 
       for (let [arrRelation, relationString] of arrRelations) {
         for (let aPerson of arrRelation) {
-          if (!(aPerson.getId() in hashVisited)) {
+          if (aPerson && !(aPerson.getId() in hashVisited)) {
             let newArrPath = arrPathRelation.slice();
-            newArrPath.append(relationString);
+            newArrPath.push(relationString);
             queue.push([aPerson, newArrPath]);
             hashVisited[aPerson.getId()] = true;
           }
@@ -724,7 +750,7 @@ class Person {
     }
 
     // No relation
-    return this.getName() + " is not related to" + person.getName();
+    return this.getName() + " is not related to " + person.getName();
   }
 }
 
